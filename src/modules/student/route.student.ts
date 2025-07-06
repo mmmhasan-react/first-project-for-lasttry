@@ -4,5 +4,8 @@ import { studentController } from './controller.student'
 const router = express.Router()
 
 router.post('/create-student/',studentController.createStudent)
+router.get('/get-student/',studentController.getStudent)
+router.get('/get-a-student/:id',studentController.getSinlgeStudent)
+
 
 export const studentRouter = router

@@ -14,7 +14,6 @@ export type Gurdian = {
     contactNumber:string;
     address:string;
   }
-
   export type UserName = {
     firstName: string;
     middleName?: string; // Optional if not always provided
@@ -34,5 +33,5 @@ export type Student = {
   guardian: Gurdian;
   localGurdian:LocalGurdian;
   profileImage:string;
-  isAcitve:'active'|'inacitve'
+  isActive:'active'|'inacitve'
 };
