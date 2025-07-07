@@ -1,18 +1,29 @@
     import { Request, Response } from "express";
     import { studentServices } from "./services.student";
+import { studentZodSchema } from "./zod.validation";
+    
 
     const createStudent = async (req:Request, res:Response)=>{
     try{
-    const {students} = req.body;
-    console.log(students)
-    const result = await studentServices.createStudentIntoDb(students)
+    const {students} = req.body
+
+    const zodParseDdata = studentZodSchema.parse(students);
+
+    console.log(zodParseDdata)
+
+    const result = await studentServices.createStudentIntoDb(zodParseDdata)
+    console.log(zodParseDdata)
     res.status(200).json({
     success:true,
     message:"student created success fully",
     data:result
     })
     }catch(err){
-    console.log(err)
+   res.status(400).json({
+    success:false,
+    message:"some thing wrong",
+    error:err
+    })
     }
     }
 
@@ -25,7 +36,11 @@
     data:result
     })
     }catch(err){
-    console.log(err)
+  res.status(200).json({
+    success:false,
+    message:"some thing wrong",
+    error:err
+    })
     }
     }
 
@@ -41,7 +56,11 @@
     data:result,
     })
     }catch(err){
-    console.log(err)
+res.status(200).json({
+    success:false,
+    message:"some thing wrong",
+    error:err
+    })
     }
     }
 
