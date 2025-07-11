@@ -1,8 +1,9 @@
 import { model, Schema } from "mongoose"
-import { Gurdian, LocalGurdian, Student, UserName } from "./interface.student"
+import { TLocalGurdian, TStudent,  TUserName, TGurdian, studentStaticModel } from "./interface.student"
 import validator from "validator"
-
-const userNameSchema = new Schema<UserName>({
+import bcrypt from 'bcrypt'
+import config from "../../config/config"
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     trim:true,
@@ -28,7 +29,7 @@ const userNameSchema = new Schema<UserName>({
 
 
 
-const gurdianSchema = new Schema<Gurdian>({
+const gurdianSchema = new Schema<TGurdian>({
   fatherName: {
     type: String,
     required: [true, 'Father name is required'],
@@ -57,7 +58,7 @@ const gurdianSchema = new Schema<Gurdian>({
 })
 
 
-const localGurdianSchema = new Schema<LocalGurdian>({
+const localGurdianSchema = new Schema<TLocalGurdian>({
   name: {
     type: String,
     required: [true, 'Local guardian name is required']
@@ -78,8 +79,13 @@ const localGurdianSchema = new Schema<LocalGurdian>({
 
 
 
-const StudentSchema = new Schema<Student>({
+const StudentSchema = new Schema<TStudent,studentStaticModel>({
   id: {
+    type: String,
+    required: [true, 'Student ID is required']
+  },
+  
+password: {
     type: String,
     required: [true, 'Student ID is required']
   },
@@ -147,5 +153,28 @@ const StudentSchema = new Schema<Student>({
 }, { timestamps: true })
 
 
+// pre hook
+StudentSchema.pre('save', async function(next){
+ this.password= await bcrypt.hash(this.password,Number(config.bcript_rounds))
+ next()
+})
 
-export const studentModel = model<Student>('Student', StudentSchema)
+
+StudentSchema.post('save', function(doc, next){
+doc.password = ''
+next()
+})
+//{creating custom instance methods}
+// StudentSchema.methods.isUserExist=async function(id:string){
+//   const exisUser= await studentModel.findOne({id})
+//   return exisUser
+// }
+
+//{creating custom static methods}
+
+
+StudentSchema.statics.isUserExist = async function (id:string){
+  const exisUser = await studentModel.findOne({id})
+  return exisUser
+}
+export const studentModel = model<TStudent, studentStaticModel>('Student', StudentSchema)

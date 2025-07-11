@@ -9,19 +9,19 @@ import { studentZodSchema } from "./zod.validation";
 
     const zodParseDdata = studentZodSchema.parse(students);
 
-    console.log(zodParseDdata)
+   
 
     const result = await studentServices.createStudentIntoDb(zodParseDdata)
-    console.log(zodParseDdata)
+ 
     res.status(200).json({
     success:true,
     message:"student created success fully",
     data:result
     })
-    }catch(err){
+    }catch(err:any){
    res.status(400).json({
     success:false,
-    message:"some thing wrong",
+    message:err.message || "some thing wrong",
     error:err
     })
     }

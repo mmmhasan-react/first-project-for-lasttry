@@ -42,8 +42,9 @@ const localGuardianZodSchema = z.object({
 
 // 🔹 Main Student schema
 export const studentZodSchema = z.object({
-  id: z.string().min(1, "Student ID is required"),
   name: userNameZodSchema,
+  id: z.string().min(1, "Student ID is required"),
+  password: z.string().min(5, "password is required"),
   gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Gender must be either 'male' or 'female'" }),
   }),

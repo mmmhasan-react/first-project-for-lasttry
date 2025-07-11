@@ -1,9 +1,23 @@
-import { Student } from "./interface.student"
+import { TStudent } from "./interface.student"
 import { studentModel } from './model.student';
 
 
-const createStudentIntoDb = async(student:Student)=>{
-const result = await studentModel.create(student)
+const createStudentIntoDb = async(studentData:TStudent)=>{
+    if(await studentModel.isUserExist(studentData.id)){
+    throw new Error("from custom static, user already exist")
+}
+const result = await studentModel.create(studentData)// built in static method
+//{code for implementing custom instance method 
+// // const student = new studentModel(studentData)
+// if(await student.isUserExist(studentData.id)){
+//     throw new Error("student allready exist")
+// }
+// const result = await student.save()// built in instance method}
+
+
+//code for custom static method
+
+
 return result;
 
 }
