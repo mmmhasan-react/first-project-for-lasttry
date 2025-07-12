@@ -1,3 +1,4 @@
+
 import { z } from "zod"
 
 // 🔹 Nested UserName schema
@@ -72,6 +73,7 @@ export const studentZodSchema = z.object({
     .min(1, "Profile image is required")
     .url("Profile image must be a valid URL"),
   isActive: z.enum(["active", "blocked"]).default("active"),
+  isDeleated:z.boolean()
 })
 
 

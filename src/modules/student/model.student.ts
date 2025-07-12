@@ -3,6 +3,7 @@ import { TLocalGurdian, TStudent,  TUserName, TGurdian, studentStaticModel } fro
 import validator from "validator"
 import bcrypt from 'bcrypt'
 import config from "../../config/config"
+import { on } from "events"
 const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
@@ -149,8 +150,12 @@ password: {
     type: String,
     enum: ['active', 'blocked'],
     default: 'active'
-  }
-}, { timestamps: true })
+  },
+  isDeleated:{
+    type:Boolean,
+    default:false
+  },
+},{ toJSON: { virtuals: true }, timestamps: true})
 
 
 // pre hook
@@ -164,6 +169,24 @@ StudentSchema.post('save', function(doc, next){
 doc.password = ''
 next()
 })
+
+StudentSchema.pre('find', function(next){
+  this.find({isDeleated:{$ne:true}})
+  next()
+})
+StudentSchema.pre('findOne', function(next){
+  this.findOne({isDeleated:{$ne:true}})
+  next()
+})
+
+StudentSchema.pre('aggregate',function(next){
+this.pipeline().unshift({$match:{isDeleated:{$ne:true}}})
+next()
+})
+
+StudentSchema.virtual('fullName').get(function () {
+  return `${this.name.firstName} ${this.name.lastName}`;
+});
 //{creating custom instance methods}
 // StudentSchema.methods.isUserExist=async function(id:string){
 //   const exisUser= await studentModel.findOne({id})

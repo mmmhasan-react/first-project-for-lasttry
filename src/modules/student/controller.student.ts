@@ -18,6 +18,7 @@ import { studentZodSchema } from "./zod.validation";
     message:"student created success fully",
     data:result
     })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }catch(err:any){
    res.status(400).json({
     success:false,
@@ -64,9 +65,29 @@ res.status(200).json({
     }
     }
 
+  const deleteStudent = async (req:Request, res:Response)=>{
+    const id = req.params.id
+    console.log(id)
+    try{
+    const result = await studentServices.deleteStudentFromDB(id)
+    res.status(200).json({
+    success:true,
+    message:"get single student success fully",
+    data:result,
+    })
+    }catch(err){
+res.status(200).json({
+    success:false,
+    message:"some thing wrong",
+    error:err
+    })
+    }
+    }
+
     export const studentController={
     createStudent,
     getStudent,
-    getSinlgeStudent
+    getSinlgeStudent,
+    deleteStudent
     }
         

@@ -36,7 +36,8 @@ export type TStudent = {
   guardian: TGurdian;
   localGurdian:TLocalGurdian;
   profileImage:string;
-  isActive:'active'|'blocked'
+  isActive:'active'|'blocked';
+  isDeleated:boolean;
 };
 
 //{ for creating instance method
