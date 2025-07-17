@@ -1,34 +1,10 @@
-    import { Request, Response } from "express";
+    import { NextFunction, Request, Response } from "express";
     import { studentServices } from "./services.student";
-import { studentZodSchema } from "./zod.validation";
     
 
-    const createStudent = async (req:Request, res:Response)=>{
-    try{
-    const {students} = req.body
 
-    const zodParseDdata = studentZodSchema.parse(students);
 
-   
-
-    const result = await studentServices.createStudentIntoDb(zodParseDdata)
- 
-    res.status(200).json({
-    success:true,
-    message:"student created success fully",
-    data:result
-    })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }catch(err:any){
-   res.status(400).json({
-    success:false,
-    message:err.message || "some thing wrong",
-    error:err
-    })
-    }
-    }
-
-   const getStudent = async (req:Request, res:Response)=>{
+   const getStudent = async (req:Request, res:Response, next:NextFunction)=>{
     try{
     const result = await studentServices.getStudentFromtoDb()
     res.status(200).json({
@@ -37,16 +13,12 @@ import { studentZodSchema } from "./zod.validation";
     data:result
     })
     }catch(err){
-  res.status(200).json({
-    success:false,
-    message:"some thing wrong",
-    error:err
-    })
+      next(err)
     }
     }
 
 
-   const getSinlgeStudent = async (req:Request, res:Response)=>{
+   const getSinlgeStudent = async (req:Request, res:Response, next:NextFunction)=>{
     const id = req.params.id
     console.log(id)
     try{
@@ -57,15 +29,11 @@ import { studentZodSchema } from "./zod.validation";
     data:result,
     })
     }catch(err){
-res.status(200).json({
-    success:false,
-    message:"some thing wrong",
-    error:err
-    })
-    }
-    }
+    next(err)
+        }
+        }
 
-  const deleteStudent = async (req:Request, res:Response)=>{
+    const deleteStudent = async (req:Request, res:Response, next:NextFunction)=>{
     const id = req.params.id
     console.log(id)
     try{
@@ -76,16 +44,11 @@ res.status(200).json({
     data:result,
     })
     }catch(err){
-res.status(200).json({
-    success:false,
-    message:"some thing wrong",
-    error:err
-    })
+    next(err)
     }
     }
 
     export const studentController={
-    createStudent,
     getStudent,
     getSinlgeStudent,
     deleteStudent

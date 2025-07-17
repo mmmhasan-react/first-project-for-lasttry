@@ -1,9 +1,6 @@
 import { model, Schema } from "mongoose"
 import { TLocalGurdian, TStudent,  TUserName, TGurdian, studentStaticModel } from "./interface.student"
 import validator from "validator"
-import bcrypt from 'bcrypt'
-import config from "../../config/config"
-import { on } from "events"
 const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
@@ -80,15 +77,16 @@ const localGurdianSchema = new Schema<TLocalGurdian>({
 
 
 
-const StudentSchema = new Schema<TStudent,studentStaticModel>({
+export const StudentSchema = new Schema<TStudent,studentStaticModel>({
   id: {
     type: String,
     required: [true, 'Student ID is required']
   },
-  
-password: {
-    type: String,
-    required: [true, 'Student ID is required']
+  user:{
+    type:Schema.Types.ObjectId,
+    required:[true,'user reference id required'],
+    unique:true,
+    ref:'UserModel'
   },
   name: {
     type: userNameSchema,
@@ -146,29 +144,11 @@ password: {
     type: String,
     required: [true, 'Profile image is required']
   },
-  isActive: {
-    type: String,
-    enum: ['active', 'blocked'],
-    default: 'active'
-  },
   isDeleated:{
     type:Boolean,
     default:false
   },
 },{ toJSON: { virtuals: true }, timestamps: true})
-
-
-// pre hook
-StudentSchema.pre('save', async function(next){
- this.password= await bcrypt.hash(this.password,Number(config.bcript_rounds))
- next()
-})
-
-
-StudentSchema.post('save', function(doc, next){
-doc.password = ''
-next()
-})
 
 StudentSchema.pre('find', function(next){
   this.find({isDeleated:{$ne:true}})
