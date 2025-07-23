@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 // import { studentZodSchema } from "../student/zod.validation";
 
 import { userServices } from "./user.service";
+import sendResponse from "../../middleWare/utils/sendResponse";
+import status from "http-status";
 
 
     const createStudent = async (req:Request, res:Response, next:NextFunction)=>{
@@ -15,12 +17,14 @@ import { userServices } from "./user.service";
 
     const result = await userServices.createStudentIntoDb(passwords, students)
  
-    res.status(200).json({
-    success:true,
-    message:"student created success fully",
-    data:result
+
+    sendResponse(res, {
+        statusCode:status.OK,
+        message:"student successfully created",
+        success:true,
+        data:result
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     }catch(err)
     {next(err)
     }

@@ -3,38 +3,20 @@
 import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'express'
 
 import cors from 'cors'
-import { studentRouter } from './modules/student/route.student';
-import { userRouter } from './modules/user/user.route';
+import { studentRouter } from './app/modules/student/route.student';
+import { userRouter } from './app/modules/user/user.route';
+import errorHandler from './app/middleWare/globalErrorHandler';
+import notFound from './app/middleWare/notFound';
+import modulesRoutes from './app/routes/router';
 const app = express()
 app.use(express.json())
 app.use(cors())
 
-app.use('/api/v1/student',studentRouter)
-app.use('/api/v1/users',userRouter)
+
+app.use('/api/v1/users',modulesRoutes)
+app.use(notFound)
 
 
-
-// app.use('/', (err: Error, req: Request, res: Response, next: NextFunction) => {
-//   const message = err.message || "Something went wrong";
-//   const code = (err as any).statusCode || 500;
-
-//   return res.status(code).json({
-//     success: false,
-//     message,
-//     error: err,
-//   });
-// });
-
-const errorHandler: ErrorRequestHandler = (err:Error, req:Request, res:Response, next:NextFunction) => {
-  const code = (err as any).statusCode || 500;
-  const message = err.message || 'Something went wrong';
-
-  res.status(code).json({
-    success: false,
-    message,
-    error: err,
-  });
-};
 
 app.use(errorHandler);
 
